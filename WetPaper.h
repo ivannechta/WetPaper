@@ -27,10 +27,10 @@ public:
 	void InitD(float* D_) {
 		D = new Matrix(q, n);
 		D->LoadMatrix(D_, q * n);
+		H = D->CompactD(Pix, q, k);
 	}
 
-	Matrix* BuildCode() {		
-		H = D->CompactD(Pix, q, k);		
+	Matrix* BuildCode() {				
 		D->vivod();
 		try {
 			Matrix tmp(q, 1);

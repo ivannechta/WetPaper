@@ -10,18 +10,6 @@
 // writable pixel 
 #define k 4 
 
-Matrix* Compactv(Matrix &v, float* Pix) {
-	Matrix* v_ = new Matrix(k,1);
-
-	for (int row=0,i = 0; i < v.N; i++) {
-		if (Pix[i] != 0) {
-			(*v_)(row, 0) = v(i,0);			
-			row++;
-		}
-	}	
-	return v_;
-}
-
 int main()
 {	
 	float D_[q * n] = {
