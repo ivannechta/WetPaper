@@ -47,9 +47,9 @@ TEST(MathEquation, Kramer3_4) {
 		-3,1,4,1
 	};
 	float B[] = {
-		4.0f / 3,
-		11.0f / 3,
-		1.0 / 3,
+		4.0f / 3.0f,
+		11.0f / 3.0f,
+		1.0f / 3.0f,
 	};
 	a.LoadMatrix(A, 12);
 	res.LoadMatrix(B, 3);	
@@ -65,9 +65,9 @@ TEST(MathEquation, Kramer3_4_no1) {
 		9,10,11,12
 	};
 	float B[] = {
-		4.0f / 3,
-		11.0f / 3,
-		1.0 / 3,
+		4.0f / 3.0f,
+		11.0f / 3.0f,
+		1.0f / 3.0f,
 	};
 	a.LoadMatrix(A, 12);
 	res.LoadMatrix(B, 3);
@@ -84,9 +84,9 @@ TEST(MathEquation, Kramer3_4_no2) {
 		9,10,11,12
 	};
 	float B[] = {
-		4.0f / 3,
-		11.0f / 3,
-		1.0 / 3,
+		4.0f / 3.0f,
+		11.0f / 3.0f,
+		1.0f / 3.0f,
 	};
 	a.LoadMatrix(A, 12);
 	res.LoadMatrix(B, 3);
@@ -225,9 +225,9 @@ TEST(MatrixEq, Size_4_1) {
 	x = a.MatrixEquation(b, 4);
 	EXPECT_TRUE(*x == res);
 }
-
 TEST(WetCode, Size4_5_4__1) {
 	if (GF_2 != true) { EXPECT_TRUE(true); return; }
+	// q=4, n=4, k=4
 	Matrix res(4,1);
 	float Res[] = {1,1,0,1};
 	res.LoadMatrix(Res,4);
@@ -240,12 +240,10 @@ TEST(WetCode, Size4_5_4__1) {
 		1,1,0,1,1
 	};
 	D.LoadMatrix(D_, 4 * 5);
-	float Pix[5] = { 0,1,1,1,1 };// ,1,1,0,1,1 };	//Matrix pix(n, 1); pix.LoadMatrix(Pix,n);
+	float Pix[5] = { 0,1,1,1,1 };
 	Matrix* H = D.CompactD(Pix,4,4);
 
-
-	Matrix m(4, 1);
-	//Matrix b_(n, 1);
+	Matrix m(4, 1);	
 
 	float B[5] = { 1,0,0,1,1 };
 	Matrix b(5, 1); b.LoadMatrix(B, 5);
@@ -259,9 +257,7 @@ TEST(WetCode, Size4_5_4__1) {
 		tmp.vivod();
 		tmp = m - tmp;
 		tmp.vivod();
-
-
-		Matrix* v;// = Compactv(b, Pix);
+		Matrix* v;
 		v = H->MatrixEquation(tmp, 4);
 		EXPECT_TRUE(*v==res);	
 }

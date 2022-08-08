@@ -20,13 +20,13 @@ public:
 		Error = false;
 		N = n; M = m;
 		data= new float * [N];
-		for (int i = 0; i < N; i++) {
+		for (uint i = 0; i < N; i++) {
 			data[i] = new float[M];
 		}
 	}
 	~Matrix() {
 		N = M = 0;		
-		for (int i = 0; i < N; i++) {
+		for (uint i = 0; i < N; i++) {
 			delete data[i];
 		}
 		delete data;
@@ -35,9 +35,9 @@ public:
 #pragma region Aux	
 	 Matrix* CompactD(float* Pix,uint qq,uint kk) {
 		Matrix* H = new Matrix(qq, kk);
-		for (int col = 0, j = 0; j < M; j++) {
+		for (uint col = 0, j = 0; j < M; j++) {
 			if (Pix[j] != 0) {
-				for (int i = 0; i < qq; i++) {
+				for (uint i = 0; i < qq; i++) {
 					(*H)(i, col) = data[i][j];
 				}
 				col++;
@@ -63,27 +63,33 @@ public:
 	}
 	void LoadMatrix(float *S,int len) {
 		if (len != M * N) throw 1;
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {				
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < M; j++) {				
 				data[i][j] = S[i * M + j];
 			}
 		}	
 	}
 	void GenRand() {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				data[i][j]=rand()%2;
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < M; j++) {
+				data[i][j] = (float)(rand() % 2);
 			}			
 		}	
 	}
-	void vivod() {
-		printf("-------\n");
-		for (int i = 0; i < N; i++) {			
-			for (int j = 0; j < M; j++) {
-				printf("%.2f ",data[i][j]);
+	void vivod() {		
+		for (uint i = 0; i < N; i++) {			
+			for (uint j = 0; j < M; j++) {
+				if (GF_2) {
+					printf("%d ", (int)data[i][j]);
+				}
+				else {
+					printf("%.2f ", data[i][j]);
+				}
+
 			}
 			printf("\n");
 		}	
+		printf("-------\n");
 	}
 	Matrix* MathEquation() { //kramer
 		float det_0,det_1;
@@ -95,9 +101,9 @@ public:
 
 		det_0 = (float)reduced;
 		if (det_0 == 0) { x->SetError(); return x; }
-		for (int i = 0; i < N; i++) {
+		for (uint i = 0; i < N; i++) {
 			tmp = reduced;
-			for (int j = 0; j < N; j++) {
+			for (uint j = 0; j < N; j++) {
 				tmp(j,i)= data[j][M - 1];
 			}
 			det_1 = (float)tmp;
@@ -123,8 +129,8 @@ public:
 		return x;
 	}
 	void Copy2Darray(float **a,float **b) {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < M; j++) {
 				a[i][j] = b[i][j];
 			}
 		}	
@@ -144,12 +150,12 @@ public:
 		float det=0;
 		Matrix sub(N-1, M-1);
 		
-		for (int t = 0; t < N; t++) {
+		for (uint t = 0; t < N; t++) {
 			znak = -znak;
 
 			//form minor			
-			for (int i = 1; i < N; i++) {
-				for (int tmp=0,j = 0; j < M; j++) {
+			for (uint i = 1; i < N; i++) {
+				for (uint tmp=0,j = 0; j < M; j++) {
 					if (t == j) { continue; }
 					sub(i-1,tmp) = data[i][j];
 					tmp++;
@@ -163,17 +169,17 @@ public:
 		const double EPS1 = 1E-9;
 		float** a;
 		a = new float* [N];
-		for (int i = 0; i < N; i++) {
+		for (uint i = 0; i < N; i++) {
 			a[i] = new float[M];
 		}
 		Copy2Darray(a, data);
 
 		int rank = max(N, M);		
 		bool *line_used=new bool[N];
-		for (int i = 0; i < N; i++) { line_used[i] = false; }
+		for (uint i = 0; i < N; i++) { line_used[i] = false; }
 
-		for (int i = 0; i < M; ++i) {
-			int j;
+		for (uint i = 0; i < M; ++i) {
+			uint j;
 			for (j = 0; j < N; ++j)
 				if (!line_used[j] && fabs(a[j][i]) > EPS1)
 					break;
@@ -181,19 +187,19 @@ public:
 				--rank;
 			else {
 				line_used[j] = true;
-				for (int p = i + 1; p < M; ++p)
+				for (uint p = i + 1; p < M; ++p)
 					a[j][p] /= a[j][i];
-				for (int k = 0; k < N; ++k)
+				for (uint k = 0; k < N; ++k)
 					if (k != j && fabs(a[k][i]) > EPS)
-						for (int p = i + 1; p < M; ++p)
+						for (uint p = i + 1; p < M; ++p)
 							a[k][p] -= a[j][p] * a[k][i];
 			}
 		}
 		return rank;
 	}
 	Matrix &operator =(Matrix &m) {		
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < M; j++) {
 				data[i][j]=m(i,j);
 			}			
 		}
@@ -201,8 +207,8 @@ public:
 		return *this;
 	}
 	Matrix& operator =(Matrix *m) {
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < M; j++) {
 				data[i][j] = (*m)(i, j);
 			}
 		}
@@ -216,21 +222,21 @@ public:
 		m->M -= M;
 		*m = *this;
 		m->M += M;		
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				(*m)(i, M+j) = (float)(i==j)?1:0;
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < M; j++) {
+				(*m)(i, M+j) = (i==j)?1.0f:0.0f;
 			}
 		}
 		//convert to left-triangle matrix
 		float tmp; 	int row=0;
-		for (int t = 0; t < (*m).N; t++){
+		for (uint t = 0; t < (*m).N; t++){
 			tmp = (*m)(t, t);
 			if (tmp == 0) { //change colomns where no 0
-				for (int i= t + 1; i < (*m).N; i++) {
+				for (uint i= t + 1; i < (*m).N; i++) {
 					if ((*m)(i, t) != 0) { row = i; i = (*m).N; }
 				}
 				//exchange
-				for (int j = 0; j < (*m).M; j++) {
+				for (uint j = 0; j < (*m).M; j++) {
 					tmp = (*m)(t, j);
 					(*m)(t, j) = (*m)(row, j);
 					(*m)(row, j) = tmp;
@@ -238,16 +244,16 @@ public:
 				tmp = (*m)(t, t);
 			}
 			
-				for (int j = 0; j < (*m).M; j++) {
+				for (uint j = 0; j < (*m).M; j++) {
 					(*m)(t, j) = (*m)(t, j) / tmp;
 					if (GF_2) {
 						(*m)(t, j) = (float)ConvertGalua((*m)(t, j));
 					}
 				}
 				float q, w;
-				for (int i = 0; i < (*m).N; i++) {
+				for (uint i = 0; i < (*m).N; i++) {
 					tmp = (*m)(i, t);
-					for (int j = 0; j < (*m).M; j++) {
+					for (uint j = 0; j < (*m).M; j++) {
 						if (i != t) {
 							q = (*m)(i, j);
 							w = (*m)(t, j);
@@ -260,8 +266,8 @@ public:
 				}			
 		}
 		// extend to normal
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < M; j++) {
 				(*m)(i, j) = (*m)(i, j+M);
 			}
 		}
@@ -270,12 +276,11 @@ public:
 	}
 	Matrix* operator *(Matrix &b) {		
 		if (M != b.N) throw 3; //wrong matrix size
-		Matrix* c = new Matrix(N, b.M);
-		int q, w;
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < b.M; j++) {
+		Matrix* c = new Matrix(N, b.M);		
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < b.M; j++) {
 				(*c)(i, j) = 0;
-				for (int tmp = 0; tmp < M; tmp++) {					
+				for (uint tmp = 0; tmp < M; tmp++) {					
 					(*c)(i,j) += (data[i][tmp] * b(tmp, j));
 					if (GF_2) {
 						(*c)(i, j) = (float)ConvertGalua((*c)(i, j));
@@ -291,8 +296,8 @@ public:
 		if (N != b.N) throw 3; //wrong matrix size
 		Matrix* c = new Matrix(N, M);
 		
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < b.M; j++) {
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < b.M; j++) {
 					(*c)(i, j) =data[i][j]-b(i,j);						
 					if (GF_2) {
 							(*c)(i, j) = (float)ConvertGalua((*c)(i, j));
@@ -306,8 +311,8 @@ public:
 		if (N != b.N) throw 3; //wrong matrix size
 		Matrix* c = new Matrix(N, M);
 
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < b.M; j++) {
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < b.M; j++) {
 				(*c)(i, j) = data[i][j] + b(i, j);				
 				if (GF_2) {
 					(*c)(i, j) = (float)ConvertGalua((*c)(i, j));
@@ -315,22 +320,13 @@ public:
 			}
 		}
 		return c;
-	}
-	/*Matrix* operator <<(uint n) { //delete column		
-		Matrix* c = new Matrix(N, M-1);		
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {				
-				
-			}
-		}
-		return c;
-	}*/
+	}	
 	bool operator ==(Matrix& b) {
 		if (M != b.M) throw 3; //wrong matrix size
 		if (N != b.N) throw 3; //wrong matrix size		
 
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
+		for (uint i = 0; i < N; i++) {
+			for (uint j = 0; j < M; j++) {
 				if (fabs(data[i][j]-b(i, j))>EPS) { return false; }
 			}
 		}

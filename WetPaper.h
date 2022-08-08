@@ -5,22 +5,22 @@
 class WetPaper {
 private:
 	uint q, n, k;
-	Matrix *D;
-	Matrix *b;
-	float *Pix;
-	Matrix* m;
-	Matrix* H;
+	Matrix *D; // ramdom matrix (q*n dimention)
+	Matrix *b; // parity bits of empty container
+	float *Pix; // map of wetpixels. 0 - wet, 1 - dry 
+	Matrix* m; // secret message
+	Matrix* H; // reduced matrix from D (q*k dimension)
 public:
-	WetPaper(uint image_size, uint message_size, float* image_parity, float* message,float *WetPix) {
-		n = image_size;
-		q = message_size;
+	WetPaper(uint parityArraySize, uint messageSize, float* parityBitsArray, float* secretMessage,float *MapWetPixels) {
+		n = parityArraySize;
+		q = messageSize;
 		k = 0;
-		Pix = WetPix;
-		for (int i = 0; i < n; i++) {
-			if (WetPix[i] == 1)k++;
+		Pix = MapWetPixels;
+		for (uint i = 0; i < n; i++) {
+			if (Pix[i] == 1)k++;
 		}
-		b=new Matrix(n, 1); b->LoadMatrix(image_parity, n);
-		m = new Matrix(q, 1); m->LoadMatrix(message, q);
+		b=new Matrix(n, 1); b->LoadMatrix(parityBitsArray, n);
+		m = new Matrix(q, 1); m->LoadMatrix(secretMessage, q);
 		D = new Matrix(q, n);
 
 		int attempt = 0;		
@@ -29,17 +29,12 @@ public:
 			H = D->CompactD(Pix, q, k);
 			attempt++;
 		} while (((int)(*H) != q) && (attempt < maxAttemptRank));
-		H->vivod();
-		printf("rank1=%d\n", (int)*H);
-		if ((int)*H!=q) { printf("Error rank of H is not enouth. I try %d times but not found good matrix D\n", maxAttemptRank); }
-		H->vivod();
+		if ((int)*H!=q) { printf("Error rank of H is not enouth. I try %d times but not found good matrix D\n", maxAttemptRank); }		
 	}
 	void InitD(float* D_) { // you can manually init D matrix if need.
 		D = new Matrix(q, n);
 		D->LoadMatrix(D_, q * n);
-		H = D->CompactD(Pix, q, k);
-		printf("rank=%d\n",(int)*H);
-		H->vivod();
+		H = D->CompactD(Pix, q, k);		
 	}
 	void CheckUp(Matrix *res) {
 		Matrix receivedMessage(q, 1);
@@ -47,23 +42,16 @@ public:
 		receivedMessage.vivod();
 	}
 
-	Matrix* BuildCode() {				
-		D->vivod();
-		try {
-			Matrix tmp(q, 1);
-			tmp = *D * *b;
-			tmp.vivod();
-			tmp = (*m) - tmp;
-			printf("m-D*b\n");
-			tmp.vivod();
-
-			Matrix* v;			
-			H->vivod();
-			v = H->MatrixEquation(tmp, k);
-			printf("Root v'\n");
-			v->vivod();
-			Matrix* res = new Matrix(n,1);
-			for (int t=0,i = 0; i < n; i++) {
+	Matrix* BuildCode() {						
+		Matrix tmp(q, 1);
+		Matrix* res = new Matrix(n, 1);
+		Matrix* v;
+		try {			
+			tmp = *D * *b;			
+			tmp = (*m) - tmp;							
+			v = H->MatrixEquation(tmp, k);			
+			
+			for (uint t=0,i = 0; i < n; i++){ //repair from v' to v
 				if (Pix[i] == 0) {
 					(*res)(i, 0) = (*b)(i,0);
 				}
@@ -71,11 +59,11 @@ public:
 					(*res)(i, 0) = (float)((int)( (*b)(i, 0) + (*v)(t, 0) )%2);
 					t++;
 				}				
-			}
-			return res;
+			}			
 		}
 		catch (int error) {
 			printf("Error %d", error);
 		}
+		return res;
 	}
 };
