@@ -24,7 +24,7 @@ int main()
 	float M[q] = { 1,1,1,1 };
 
 	WetPaper *w=new WetPaper(n,q,B,M,Pix);	
-	w->InitD(D_);
+	//w->InitD(D_);
 	Matrix *res=w->BuildCode();
 	res->vivod();	
 	w->CheckUp(res);

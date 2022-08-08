@@ -122,6 +122,13 @@ public:
 		delete t;
 		return x;
 	}
+	void Copy2Darray(float **a,float **b) {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				a[i][j] = b[i][j];
+			}
+		}	
+	}
 #pragma endregion
 #pragma region Operators
 	operator float() { //calc Determinant				
@@ -154,6 +161,12 @@ public:
 	}
 	operator int() { //Rank of matrix
 		const double EPS1 = 1E-9;
+		float** a;
+		a = new float* [N];
+		for (int i = 0; i < N; i++) {
+			a[i] = new float[M];
+		}
+		Copy2Darray(a, data);
 
 		int rank = max(N, M);		
 		bool *line_used=new bool[N];
@@ -162,18 +175,18 @@ public:
 		for (int i = 0; i < M; ++i) {
 			int j;
 			for (j = 0; j < N; ++j)
-				if (!line_used[j] && fabs(data[j][i]) > EPS1)
+				if (!line_used[j] && fabs(a[j][i]) > EPS1)
 					break;
 			if (j == N)
 				--rank;
 			else {
 				line_used[j] = true;
 				for (int p = i + 1; p < M; ++p)
-					data[j][p] /= data[j][i];
+					a[j][p] /= a[j][i];
 				for (int k = 0; k < N; ++k)
-					if (k != j && fabs(data[k][i]) > EPS)
+					if (k != j && fabs(a[k][i]) > EPS)
 						for (int p = i + 1; p < M; ++p)
-							data[k][p] -= data[j][p] * data[k][i];
+							a[k][p] -= a[j][p] * a[k][i];
 			}
 		}
 		return rank;

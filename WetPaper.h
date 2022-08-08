@@ -29,14 +29,17 @@ public:
 			H = D->CompactD(Pix, q, k);
 			attempt++;
 		} while (((int)(*H) != q) && (attempt < maxAttemptRank));
-		printf("rank=%d\n", (int)*H);
+		H->vivod();
+		printf("rank1=%d\n", (int)*H);
 		if ((int)*H!=q) { printf("Error rank of H is not enouth. I try %d times but not found good matrix D\n", maxAttemptRank); }
+		H->vivod();
 	}
 	void InitD(float* D_) { // you can manually init D matrix if need.
 		D = new Matrix(q, n);
 		D->LoadMatrix(D_, q * n);
 		H = D->CompactD(Pix, q, k);
 		printf("rank=%d\n",(int)*H);
+		H->vivod();
 	}
 	void CheckUp(Matrix *res) {
 		Matrix receivedMessage(q, 1);
@@ -55,6 +58,7 @@ public:
 			tmp.vivod();
 
 			Matrix* v;			
+			H->vivod();
 			v = H->MatrixEquation(tmp, k);
 			printf("Root v'\n");
 			v->vivod();

@@ -200,6 +200,32 @@ TEST(MatrixEq, Size_3_1) {
 	EXPECT_TRUE(*x==res);
 }
 
+TEST(MatrixEq, Size_4_1) {
+
+	if (GF_2 == true) { EXPECT_TRUE(true); return; }
+	Matrix a(4, 4);
+	Matrix* x;
+	Matrix b(4, 1), res(4, 1);
+	float A[] = {
+		0,0,1,0,
+		1,0,0,1,
+		0,1,0,1,
+		1,1,1,0
+	};
+	float B[] = {
+		1,0,1,0
+	};
+	float Res[] = {
+		1,0,1,1
+	};
+	a.LoadMatrix(A, 16);
+	b.LoadMatrix(B, 4);
+	res.LoadMatrix(Res, 4);
+
+	x = a.MatrixEquation(b, 4);
+	EXPECT_TRUE(*x == res);
+}
+
 TEST(WetCode, Size4_5_4__1) {
 	if (GF_2 != true) { EXPECT_TRUE(true); return; }
 	Matrix res(4,1);
