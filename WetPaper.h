@@ -29,7 +29,7 @@ public:
 		D->LoadMatrix(D_, q * n);
 	}
 
-	void BuildCode() {		
+	Matrix* BuildCode() {		
 		H = D->CompactD(Pix, q, k);		
 		D->vivod();
 		try {
@@ -40,17 +40,23 @@ public:
 			tmp.vivod();
 
 
-			Matrix* v;
+			Matrix* v;			
 			v = H->MatrixEquation(tmp, k);
-
 			v->vivod();
+			Matrix* res = new Matrix(n,1);
+			for (int t=0,i = 0; i < n; i++) {
+				if (Pix[i] == 0) {
+					(*res)(i, 0) = (*b)(i,0);
+				}
+				else {
+					(*res)(i, 0) = (*v)(t,0);
+					t++;
+				}				
+			}
+			return res;
 		}
 		catch (int error) {
 			printf("Error %d", error);
 		}
-
-
 	}
-
-
 };

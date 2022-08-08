@@ -24,9 +24,6 @@ Matrix* Compactv(Matrix &v, float* Pix) {
 
 int main()
 {	
-	
-	
-	
 	float D_[q * n] = {
 		1,1,1,0,1,
 		1,0,1,1,0,
@@ -40,5 +37,6 @@ int main()
 
 	WetPaper *w=new WetPaper(n,q,B,M,Pix);	
 	w->InitD(D_);
-	w->BuildCode();
+	Matrix *res=w->BuildCode();
+	res->vivod();
 }
