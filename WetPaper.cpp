@@ -26,5 +26,6 @@ int main()
 	WetPaper *w=new WetPaper(n,q,B,M,Pix);	
 	w->InitD(D_);
 	Matrix *res=w->BuildCode();
-	res->vivod();
+	res->vivod();	
+	w->CheckUp(res);
 }

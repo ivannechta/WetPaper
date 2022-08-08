@@ -21,14 +21,27 @@ public:
 		}
 		b=new Matrix(n, 1); b->LoadMatrix(image_parity, n);
 		m = new Matrix(q, 1); m->LoadMatrix(message, q);
-		
+		D = new Matrix(q, n);
 
+		int attempt = 0;		
+		do {
+			D->GenRand();
+			H = D->CompactD(Pix, q, k);
+			attempt++;
+		} while (((int)(*H) != q) && (attempt < maxAttemptRank));
+		printf("rank=%d\n", (int)*H);
+		if ((int)*H!=q) { printf("Error rank of H is not enouth. I try %d times but not found good matrix D\n", maxAttemptRank); }
 	}
-	void InitD(float* D_) {
+	void InitD(float* D_) { // you can manually init D matrix if need.
 		D = new Matrix(q, n);
 		D->LoadMatrix(D_, q * n);
 		H = D->CompactD(Pix, q, k);
 		printf("rank=%d\n",(int)*H);
+	}
+	void CheckUp(Matrix *res) {
+		Matrix receivedMessage(q, 1);
+		receivedMessage = (*D) * (*res);
+		receivedMessage.vivod();
 	}
 
 	Matrix* BuildCode() {				
@@ -38,11 +51,12 @@ public:
 			tmp = *D * *b;
 			tmp.vivod();
 			tmp = (*m) - tmp;
+			printf("m-D*b\n");
 			tmp.vivod();
-
 
 			Matrix* v;			
 			v = H->MatrixEquation(tmp, k);
+			printf("Root v'\n");
 			v->vivod();
 			Matrix* res = new Matrix(n,1);
 			for (int t=0,i = 0; i < n; i++) {
@@ -50,7 +64,7 @@ public:
 					(*res)(i, 0) = (*b)(i,0);
 				}
 				else {
-					(*res)(i, 0) = (*v)(t,0);
+					(*res)(i, 0) = (float)((int)( (*b)(i, 0) + (*v)(t, 0) )%2);
 					t++;
 				}				
 			}
