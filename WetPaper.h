@@ -28,6 +28,7 @@ public:
 		D = new Matrix(q, n);
 		D->LoadMatrix(D_, q * n);
 		H = D->CompactD(Pix, q, k);
+		printf("rank=%d\n",(int)*H);
 	}
 
 	Matrix* BuildCode() {				

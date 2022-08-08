@@ -153,8 +153,30 @@ public:
 		return det;
 	}
 	operator int() { //Rank of matrix
+		const double EPS1 = 1E-9;
 
-		return 666;
+		int rank = max(N, M);		
+		bool *line_used=new bool[N];
+		for (int i = 0; i < N; i++) { line_used[i] = false; }
+
+		for (int i = 0; i < M; ++i) {
+			int j;
+			for (j = 0; j < N; ++j)
+				if (!line_used[j] && fabs(data[j][i]) > EPS1)
+					break;
+			if (j == N)
+				--rank;
+			else {
+				line_used[j] = true;
+				for (int p = i + 1; p < M; ++p)
+					data[j][p] /= data[j][i];
+				for (int k = 0; k < N; ++k)
+					if (k != j && fabs(data[k][i]) > EPS)
+						for (int p = i + 1; p < M; ++p)
+							data[k][p] -= data[j][p] * data[k][i];
+			}
+		}
+		return rank;
 	}
 	Matrix &operator =(Matrix &m) {		
 		for (int i = 0; i < N; i++) {
