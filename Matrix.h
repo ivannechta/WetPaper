@@ -13,6 +13,9 @@ public:
 	uint M;
 public:
 #pragma region Constructor
+	Matrix() {
+		Error = true;
+	}
 	Matrix(uint n,uint m) {
 		Error = false;
 		N = n; M = m;
@@ -29,7 +32,19 @@ public:
 		delete data;
 	}
 #pragma endregion
-#pragma region Aux
+#pragma region Aux	
+	 Matrix* CompactD(float* Pix,uint qq,uint kk) {
+		Matrix* H = new Matrix(qq, kk);
+		for (int col = 0, j = 0; j < M; j++) {
+			if (Pix[j] != 0) {
+				for (int i = 0; i < qq; i++) {
+					(*H)(i, col) = data[i][j];
+				}
+				col++;
+			}
+		}
+		return H;
+	}	
 	int ConvertGalua(float x) {
 		if (x < 0)x = -x;
 		return (int)x % 2;

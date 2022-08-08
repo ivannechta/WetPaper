@@ -38,6 +38,7 @@ TEST(Determinant, Size4) {
 }
 
 TEST(MathEquation, Kramer3_4) {
+	if (GF_2 == true) { EXPECT_TRUE(true); return; }
 	Matrix a(3, 4);
 	Matrix b(3, 1),res(3,1);
 	float A[] = {
@@ -198,6 +199,48 @@ TEST(MatrixEq, Size_3_1) {
 	x=a.MatrixEquation(b,2);
 	EXPECT_TRUE(*x==res);
 }
+
+TEST(WetCode, Size4_5_4__1) {
+	if (GF_2 != true) { EXPECT_TRUE(true); return; }
+	Matrix res(4,1);
+	float Res[] = {1,1,0,1};
+	res.LoadMatrix(Res,4);
+
+	Matrix D(4, 5);
+	float D_[4 * 5] = {
+		1,1,1,0,1,
+		1,0,1,1,0,
+		1,0,1,1,1,
+		1,1,0,1,1
+	};
+	D.LoadMatrix(D_, 4 * 5);
+	float Pix[5] = { 0,1,1,1,1 };// ,1,1,0,1,1 };	//Matrix pix(n, 1); pix.LoadMatrix(Pix,n);
+	Matrix* H = D.CompactD(Pix,4,4);
+
+
+	Matrix m(4, 1);
+	//Matrix b_(n, 1);
+
+	float B[5] = { 1,0,0,1,1 };
+	Matrix b(5, 1); b.LoadMatrix(B, 5);
+
+
+	float M[4] = { 1,1,1,1 }; m.LoadMatrix(M, 4);
+
+	//read	
+		Matrix tmp(4, 1);
+		tmp = D * b;
+		tmp.vivod();
+		tmp = m - tmp;
+		tmp.vivod();
+
+
+		Matrix* v;// = Compactv(b, Pix);
+		v = H->MatrixEquation(tmp, 4);
+		EXPECT_TRUE(*v==res);	
+}
+
+
 
 
 

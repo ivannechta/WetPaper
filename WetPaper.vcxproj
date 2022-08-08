@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="Header.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="WetPaper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
